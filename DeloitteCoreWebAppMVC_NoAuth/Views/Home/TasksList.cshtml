@@ -1,0 +1,96 @@
+﻿@using DeloitteCoreWebAppMVC_NoAuth.Models
+@model TasksListViewModel
+@{
+    ViewBag.Title = "TasksList";
+}
+
+<html>
+<head>
+    @* Call to Controller Tasks *@
+    <meta name="viewport" content="width=device-width" />
+    <title>TasksList</title>
+</head>
+<body>
+
+    <div>
+        <button id="addTask">Add Task</button>
+
+        <ul id="tasksList">
+            @{
+                foreach (var item in Model.Tasks)
+                {
+                    <li id='@item.Id'>
+                        <input id="@("checkbox" + item.Id)" type="checkbox" name="_chk" checked="@(item.IsChecked)" />
+                        <label for="lname">Task description:</label><br>
+                        <input type="text" id="@("lname" + item.Id)" name="lname" value="@(item.Description)">
+                        @item.LastUpdate
+                        <button id="@("removeTask" + item.Id)">Remove Task</button>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+
+    <input id="saveTasks" type="submit" />
+</body>
+</html>
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(function () {
+            $('#addTask').click(function () {
+                var idNumber = 0;
+                var ul = document.getElementById("tasksList");
+                var items = ul.getElementsByTagName("li");
+
+                for (var i = 0; i < items.length; i++) {
+                    if (idNumber < Number(items[i].id)) {
+                        idNumber = Number(items[i].id);
+                    }
+                }
+
+                idNumber++;
+                var $task = $('<li id="' + idNumber + '"><input id="checkbox' + idNumber + '" type="checkbox" name="chk_"><label for="lname">Task description:</label><br><input type="text" id="lname' + idNumber + '" name="lname"><button id="removeTask' + idNumber + '">Remove Task</button></li>');
+                $("#tasksList").append($task);
+
+                $("#removeTask" + idNumber).click(function (e) {
+                    e.target.parentNode.remove();
+                });
+            });
+        });
+
+        $(function () {
+            var ul = document.getElementById("tasksList");
+            var items = ul.getElementsByTagName("li");
+            for (var i = 0; i < items.length; ++i) {
+                $("#removeTask" + items[i].id).click(function (e) {
+                    //debugger
+                    e.target.parentNode.remove();
+                });
+            }
+        });
+
+        $(function () {
+            $('#saveTasks').click(function () {
+                var ul = document.getElementById("tasksList");
+                var items = ul.getElementsByTagName("li");
+                var tasks = [];
+                for (var i = 0; i < items.length; ++i) {
+                    task = {"Id" : items[i].id, "Description": $("#" + items[i].children[3].id).val(), "IsChecked": $("#" + items[i].children[0].id).prop('checked') };
+                    tasks.push(task);
+                }
+
+                var items = JSON.stringify(tasks);
+                $.ajax({
+                    url: "@Url.Action("SaveTasks","Home")",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: items,
+                    success: function () { /*remove()*/ },
+                    error: function (xhr, status, error) {}
+                });
+            });
+        });
+    </script>
+}

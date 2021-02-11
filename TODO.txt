@@ -1,0 +1,8 @@
+Implement a proper authentification like katana, with encryption and a way to identify the user
+Implement data save per task for Create task / delete Task / update task (when defocusing the text field) / so that the LastUpdate date can be used more efficiently when updating only one entry
+Move js code of the views (TaskList) into site.js
+Move Business logic in Business Layer
+Logging When appropriate (e.g. cache expiration or cache callback when elements are removed)
+Making sure we are logging all exceptions on global and specific level and log accordingly
+Test all the actions and test layers (BusinessLayer / CacheAccessLayer and controller) separately so tests are as unitary as possible / Mock cache : use Moq-like nuget packages
+Checking that the cache is properly persisted when needed and that the data is cached, not from DB (basically have a finer control over what's cached and what's persisted and when). Maybe register transaction logs + snapshot DB to recover data if needed
